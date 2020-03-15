@@ -78,7 +78,7 @@ sqlite3_url_part(sqlite3_context *ctx, int nargs, sqlite3_value **args, CURLUPar
         return;
     }
 
-    status = curl_url_set(h, CURLUPART_URL, url, 0);
+    status = curl_url_set(h, CURLUPART_URL, url, CURLU_NON_SUPPORT_SCHEME);
     if(status != CURLUE_OK) {
         curl_url_cleanup(h);
         sqlite3_url_result_curl_error(ctx, status);
