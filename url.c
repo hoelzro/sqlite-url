@@ -71,7 +71,7 @@ sqlite3_url_part(sqlite3_context *ctx, int nargs, sqlite3_value **args, CURLUPar
         sqlite3_url_result_curl_error(ctx, status);
         return;
     } else {
-        sqlite3_result_text(ctx, url_part, -1, curl_free); // XXX SQLITE_TRANSIENT?
+        sqlite3_result_text(ctx, url_part, -1, curl_free);
     }
 
     curl_url_cleanup(h);
