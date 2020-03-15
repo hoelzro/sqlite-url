@@ -39,7 +39,7 @@ sqlite3_url_result_curl_error(sqlite3_context *ctx, CURLUcode err)
 }
 
 static void
-sqlite3_url_scheme(sqlite3_context *ctx, int nargs, sqlite3_value **args)
+sqlite3_url_part(sqlite3_context *ctx, int nargs, sqlite3_value **args, CURLUPart what, CURLUcode missing_err)
 {
     const char *url;
     char *url_part;
@@ -63,45 +63,8 @@ sqlite3_url_scheme(sqlite3_context *ctx, int nargs, sqlite3_value **args)
         return;
     }
 
-    status = curl_url_get(h, CURLUPART_SCHEME, &url_part, CURLU_DEFAULT_PORT);
-    if(status != CURLUE_OK) {
-        curl_url_cleanup(h);
-        sqlite3_url_result_curl_error(ctx, status);
-        return;
-    }
-
-    sqlite3_result_text(ctx, url_part, -1, curl_free); // XXX SQLITE_TRANSIENT?
-
-    curl_url_cleanup(h);
-}
-
-static void
-sqlite3_url_user(sqlite3_context *ctx, int nargs, sqlite3_value **args)
-{
-    const char *url;
-    char *url_part;
-    CURLUcode status;
-    CURLU *h;
-
-    // XXX check type/return value?
-    url = sqlite3_value_text(args[0]);
-
-    h = curl_url();
-
-    if(h == NULL) {
-        sqlite3_result_error_nomem(ctx);
-        return;
-    }
-
-    status = curl_url_set(h, CURLUPART_URL, url, 0);
-    if(status != CURLUE_OK) {
-        curl_url_cleanup(h);
-        sqlite3_url_result_curl_error(ctx, status);
-        return;
-    }
-
-    status = curl_url_get(h, CURLUPART_USER, &url_part, CURLU_DEFAULT_PORT);
-    if(status == CURLUE_NO_USER) {
+    status = curl_url_get(h, what, &url_part, CURLU_DEFAULT_PORT);
+    if(status == missing_err) {
         sqlite3_result_null(ctx);
     } else if(status != CURLUE_OK) {
         curl_url_cleanup(h);
@@ -112,6 +75,18 @@ sqlite3_url_user(sqlite3_context *ctx, int nargs, sqlite3_value **args)
     }
 
     curl_url_cleanup(h);
+}
+
+static void
+sqlite3_url_scheme(sqlite3_context *ctx, int nargs, sqlite3_value **args)
+{
+    sqlite3_url_part(ctx, nargs, args, CURLUPART_SCHEME, CURLUE_NO_SCHEME);
+}
+
+static void
+sqlite3_url_user(sqlite3_context *ctx, int nargs, sqlite3_value **args)
+{
+    sqlite3_url_part(ctx, nargs, args, CURLUPART_USER, CURLUE_NO_USER);
 }
 
 int
