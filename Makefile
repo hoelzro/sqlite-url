@@ -6,7 +6,7 @@ all: url.so
 %.so: %.o
 	gcc -o $@ -shared $^ $(LDFLAGS)
 
-test:
+test: all
 	sqlite3 -batch ':memory:' '.read test.sql'
 
 clean:
