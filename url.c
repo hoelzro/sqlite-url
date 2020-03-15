@@ -101,13 +101,15 @@ sqlite3_url_user(sqlite3_context *ctx, int nargs, sqlite3_value **args)
     }
 
     status = curl_url_get(h, CURLUPART_USER, &url_part, CURLU_DEFAULT_PORT);
-    if(status != CURLUE_OK) {
+    if(status == CURLUE_NO_USER) {
+        sqlite3_result_null(ctx);
+    } else if(status != CURLUE_OK) {
         curl_url_cleanup(h);
         sqlite3_url_result_curl_error(ctx, status);
         return;
+    } else {
+        sqlite3_result_text(ctx, url_part, -1, curl_free); // XXX SQLITE_TRANSIENT?
     }
-
-    sqlite3_result_text(ctx, url_part, -1, curl_free); // XXX SQLITE_TRANSIENT?
 
     curl_url_cleanup(h);
 }
