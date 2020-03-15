@@ -89,6 +89,54 @@ sqlite3_url_user(sqlite3_context *ctx, int nargs, sqlite3_value **args)
     sqlite3_url_part(ctx, nargs, args, CURLUPART_USER, CURLUE_NO_USER);
 }
 
+static void
+sqlite3_url_password(sqlite3_context *ctx, int nargs, sqlite3_value **args)
+{
+    sqlite3_url_part(ctx, nargs, args, CURLUPART_PASSWORD, CURLUE_NO_PASSWORD);
+}
+
+static void
+sqlite3_url_options(sqlite3_context *ctx, int nargs, sqlite3_value **args)
+{
+    sqlite3_url_part(ctx, nargs, args, CURLUPART_OPTIONS, CURLUE_NO_OPTIONS);
+}
+
+static void
+sqlite3_url_host(sqlite3_context *ctx, int nargs, sqlite3_value **args)
+{
+    sqlite3_url_part(ctx, nargs, args, CURLUPART_HOST, CURLUE_NO_HOST);
+}
+
+static void
+sqlite3_url_port(sqlite3_context *ctx, int nargs, sqlite3_value **args)
+{
+    sqlite3_url_part(ctx, nargs, args, CURLUPART_PORT, CURLUE_NO_PORT);
+}
+
+static void
+sqlite3_url_path(sqlite3_context *ctx, int nargs, sqlite3_value **args)
+{
+    sqlite3_url_part(ctx, nargs, args, CURLUPART_PATH, -1);
+}
+
+static void
+sqlite3_url_query(sqlite3_context *ctx, int nargs, sqlite3_value **args)
+{
+    sqlite3_url_part(ctx, nargs, args, CURLUPART_QUERY, CURLUE_NO_QUERY);
+}
+
+static void
+sqlite3_url_fragment(sqlite3_context *ctx, int nargs, sqlite3_value **args)
+{
+    sqlite3_url_part(ctx, nargs, args, CURLUPART_FRAGMENT, CURLUE_NO_FRAGMENT);
+}
+
+static void
+sqlite3_url_zoneid(sqlite3_context *ctx, int nargs, sqlite3_value **args)
+{
+    sqlite3_url_part(ctx, nargs, args, CURLUPART_ZONEID, -1);
+}
+
 int
 sqlite3_url_init(sqlite3 *db, char **err_out, const sqlite3_api_routines *api)
 {
@@ -96,6 +144,14 @@ sqlite3_url_init(sqlite3 *db, char **err_out, const sqlite3_api_routines *api)
 
     sqlite3_create_function(db, "url_scheme", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC, NULL, sqlite3_url_scheme, NULL, NULL);
     sqlite3_create_function(db, "url_user", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC, NULL, sqlite3_url_user, NULL, NULL);
+    sqlite3_create_function(db, "url_password", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC, NULL, sqlite3_url_password, NULL, NULL);
+    sqlite3_create_function(db, "url_options", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC, NULL, sqlite3_url_options, NULL, NULL);
+    sqlite3_create_function(db, "url_host", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC, NULL, sqlite3_url_host, NULL, NULL);
+    sqlite3_create_function(db, "url_port", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC, NULL, sqlite3_url_port, NULL, NULL);
+    sqlite3_create_function(db, "url_path", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC, NULL, sqlite3_url_path, NULL, NULL);
+    sqlite3_create_function(db, "url_query", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC, NULL, sqlite3_url_query, NULL, NULL);
+    sqlite3_create_function(db, "url_fragment", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC, NULL, sqlite3_url_fragment, NULL, NULL);
+    sqlite3_create_function(db, "url_zoneid", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC, NULL, sqlite3_url_zoneid, NULL, NULL);
 
     return SQLITE_OK;
 }
