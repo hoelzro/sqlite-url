@@ -36,13 +36,15 @@ sqlite3_url_result_curl_error(sqlite3_context *ctx, CURLUcode err)
     switch(err) {
         case CURLUE_OK:
             return;
+        case CURLUE_MALFORMED_INPUT:
+            sqlite3_result_null(ctx);
+            return;
         case CURLUE_OUT_OF_MEMORY:
             sqlite3_result_error_nomem(ctx);
             return;
 
         HANDLE_STATUS(CURLUE_BAD_HANDLE, "bad handle");
         HANDLE_STATUS(CURLUE_BAD_PARTPOINTER, "bad part pointer");
-        HANDLE_STATUS(CURLUE_MALFORMED_INPUT, "malformed input");
         HANDLE_STATUS(CURLUE_BAD_PORT_NUMBER, "bad port number");
         HANDLE_STATUS(CURLUE_UNSUPPORTED_SCHEME, "unsuppported scheme");
         HANDLE_STATUS(CURLUE_URLDECODE, "urldecode");
